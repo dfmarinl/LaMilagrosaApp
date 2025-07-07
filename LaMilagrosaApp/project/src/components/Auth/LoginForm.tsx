@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, Store } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom'; // 👈 importamos useNavigate
 
 interface LoginFormProps {
   onToggleForm: () => void;
@@ -13,6 +14,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate(); // 👈 inicializamos navigate
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,7 +23,9 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
 
     try {
       const success = await login(email, password);
-      if (!success) {
+      if (success) {
+        navigate('/employee-dashboard'); // 👈 redirigimos después de login exitoso
+      } else {
         setError('Email o contraseña incorrectos');
       }
     } catch (err) {
