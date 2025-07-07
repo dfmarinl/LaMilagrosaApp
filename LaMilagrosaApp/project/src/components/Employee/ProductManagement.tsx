@@ -10,7 +10,7 @@ const ProductManagement: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
 
-  const categories = ['all', 'Jamones', 'Embutidos', 'Quesos', 'Conservas', 'Vinos'];
+  const categories = ['all', 'Jamones', 'Embutidos', 'Quesos', 'Conservas', 'Vinos', 'Aceites'];
 
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -41,6 +41,13 @@ const ProductManagement: React.FC = () => {
     setProducts(products.map(p => 
       p.id === productId ? { ...p, isActive: !p.isActive } : p
     ));
+  };
+
+  const getStockStatus = (stock: number) => {
+    if (stock === 0) return { color: 'bg-red-100 text-red-800', text: 'AGOTADO' };
+    if (stock <= 5) return { color: 'bg-red-100 text-red-800', text: `${stock} unidades - CRÍTICO` };
+    if (stock <= 10) return { color: 'bg-yellow-100 text-yellow-800', text: `${stock} unidades - BAJO` };
+    return { color: 'bg-green-100 text-green-800', text: `${stock} unidades` };
   };
 
   return (
@@ -115,64 +122,65 @@ const ProductManagement: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredProducts.map((product) => (
-                <tr key={product.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-12 h-12 object-cover rounded-lg mr-4"
-                      />
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                        <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>
+              {filteredProducts.map((product) => {
+                const stockStatus = getStockStatus(product.stock);
+                return (
+                  <tr key={product.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-12 h-12 object-cover rounded-lg mr-4"
+                        />
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                          <div className="text-sm text-gray-500 truncate max-w-xs">{product.description}</div>
+                        </div>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
-                      {product.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatPrice(product.price)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                      product.stock < 10 ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'
-                    }`}>
-                      {product.stock} unidades
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleToggleStatus(product.id)}
-                      className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
-                        product.isActive 
-                          ? 'bg-green-100 text-green-800 hover:bg-green-200' 
-                          : 'bg-red-100 text-red-800 hover:bg-red-200'
-                      }`}
-                    >
-                      {product.isActive ? 'Activo' : 'Inactivo'}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                    <button
-                      onClick={() => handleEdit(product)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      <Edit2 className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(product.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                        {product.category}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {formatPrice(product.price)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${stockStatus.color}`}>
+                        {stockStatus.text}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <button
+                        onClick={() => handleToggleStatus(product.id)}
+                        className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
+                          product.isActive 
+                            ? 'bg-green-100 text-green-800 hover:bg-green-200' 
+                            : 'bg-red-100 text-red-800 hover:bg-red-200'
+                        }`}
+                      >
+                        {product.isActive ? 'Activo' : 'Inactivo'}
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
+                      <button
+                        onClick={() => handleEdit(product)}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

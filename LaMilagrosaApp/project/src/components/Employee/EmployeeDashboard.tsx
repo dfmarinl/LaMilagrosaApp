@@ -1,9 +1,11 @@
 import React from 'react';
 import { BarChart3, Users, Package, ShoppingBag, TrendingUp, DollarSign } from 'lucide-react';
 import ProductManagement from './ProductManagement';
+import CategoryManagement from './CategoryManagement';
 import UserManagement from './UserManagement';
 import OrderManagement from './OrderManagement';
 import SupplierManagement from './SupplierManagement';
+import StockAlerts from './StockAlerts';
 import Reports from './Reports';
 
 interface EmployeeDashboardProps {
@@ -13,6 +15,10 @@ interface EmployeeDashboardProps {
 const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ activeSection }) => {
   if (activeSection === 'productos') {
     return <ProductManagement />;
+  }
+
+  if (activeSection === 'categorias') {
+    return <CategoryManagement />;
   }
 
   if (activeSection === 'usuarios') {
@@ -25,6 +31,10 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ activeSection }) 
 
   if (activeSection === 'proveedores') {
     return <SupplierManagement />;
+  }
+
+  if (activeSection === 'alertas-stock') {
+    return <StockAlerts />;
   }
 
   if (activeSection === 'reportes') {
