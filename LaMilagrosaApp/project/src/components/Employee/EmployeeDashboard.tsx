@@ -1,6 +1,7 @@
 import React from 'react';
 import { BarChart3, Users, Package, ShoppingBag, TrendingUp, DollarSign } from 'lucide-react';
 import ProductManagement from './ProductManagement';
+import SalesModule from './SalesModule';
 import CategoryManagement from './CategoryManagement';
 import UserManagement from './UserManagement';
 import OrderManagement from './OrderManagement';
@@ -19,6 +20,9 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ activeSection }) 
 
   if (activeSection === 'categorias') {
     return <CategoryManagement />;
+  }
+  if (activeSection === 'ventas') {
+    return <SalesModule />;
   }
 
   if (activeSection === 'usuarios') {

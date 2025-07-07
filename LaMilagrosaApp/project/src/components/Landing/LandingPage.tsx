@@ -1,5 +1,6 @@
 import React from 'react';
 import { Store, Star, Truck, Shield, ArrowRight, Phone, Mail, MapPin } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface LandingPageProps {
   onLoginClick: () => void;
@@ -7,6 +8,7 @@ interface LandingPageProps {
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({ onLoginClick, onRegisterClick }) => {
+  const navigate = useNavigate();
   const featuredProducts = [
     {
       name: 'Jamón Serrano Premium',
@@ -37,7 +39,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLoginClick, onRegisterClick
   };
 
   return (
-    <div className="min-h-screen bg-white">
+     <div className="min-h-screen bg-white">
       {/* Header */}
       <header className="bg-gradient-to-r from-red-800 to-red-900 text-white">
         <div className="container mx-auto px-4 py-4">
@@ -49,16 +51,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLoginClick, onRegisterClick
                 <p className="text-red-200 text-sm">Tradición y calidad desde 1985</p>
               </div>
             </div>
-            
+
             <div className="flex items-center space-x-4">
               <button
-                onClick={onLoginClick}
+                onClick={() => navigate('/login')}
                 className="px-6 py-2 border border-white text-white hover:bg-white hover:text-red-800 rounded-lg transition-colors"
               >
                 Iniciar Sesión
               </button>
               <button
-                onClick={onRegisterClick}
+                onClick={() => navigate('/register')}
                 className="px-6 py-2 bg-yellow-500 text-red-900 hover:bg-yellow-400 rounded-lg transition-colors font-semibold"
               >
                 Registrarse
@@ -74,29 +76,29 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLoginClick, onRegisterClick
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <h2 className="text-5xl font-bold text-gray-800 leading-tight">
-                Los Mejores
-                <span className="text-red-600"> Productos Gourmet</span>
-                <br />
-                de España
+                Los Mejores <span className="text-red-600">Productos Gourmet</span>
+                <br /> de España
               </h2>
               <p className="text-xl text-gray-600 leading-relaxed">
-                Descubre nuestra selección premium de jamones, embutidos, quesos y vinos. 
+                Descubre nuestra selección premium de jamones, embutidos, quesos y vinos.
                 Productos artesanales de la más alta calidad, importados directamente desde España.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={onRegisterClick}
+                  onClick={() => navigate('/register')}
                   className="flex items-center justify-center space-x-2 bg-red-600 text-white px-8 py-4 rounded-lg hover:bg-red-700 transition-colors text-lg font-semibold"
                 >
                   <span>Comprar Ahora</span>
                   <ArrowRight className="h-5 w-5" />
                 </button>
-                <button className="flex items-center justify-center space-x-2 border-2 border-red-600 text-red-600 px-8 py-4 rounded-lg hover:bg-red-600 hover:text-white transition-colors text-lg font-semibold">
+                <button
+                  className="flex items-center justify-center space-x-2 border-2 border-red-600 text-red-600 px-8 py-4 rounded-lg hover:bg-red-600 hover:text-white transition-colors text-lg font-semibold"
+                >
                   <span>Ver Catálogo</span>
                 </button>
               </div>
             </div>
-            
+
             <div className="relative">
               <div className="grid grid-cols-2 gap-4">
                 <img
