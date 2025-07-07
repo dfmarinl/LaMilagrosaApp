@@ -12,6 +12,8 @@ import com.reflex.inventario.product.Product;
 import com.reflex.inventario.product.ProductRepository;
 import com.reflex.inventario.productInventory.ProductInventory;
 import com.reflex.inventario.productInventory.ProductInvetoryRepository;
+import com.reflex.inventario.provider.Provider;
+import com.reflex.inventario.provider.ProviderRepository;
 import com.reflex.inventario.user.User;
 import com.reflex.inventario.user.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -31,6 +33,7 @@ public class OrderServiceImpl implements OrderService {
     private final CustomerOrderRepository customerOrderRepository;
     private final PurchaseOrderRepository purchaseOrderRepository;
     private final ProductInvetoryRepository productInvetoryRepository;
+    private final ProviderRepository providerRepository;
     private final UserRepository userRepository;
     private final OrderMapper orderMapper;
 
@@ -59,6 +62,8 @@ public class OrderServiceImpl implements OrderService {
         User user = optionalUser.get();
         CustomerOrder newOrder = orderMapper.DTOtoCustomerOrder(orderReqDTO);
         newOrder.setUser(user);
+        newOrder.setAproved(false);
+        newOrder.setIVA(orderReqDTO.getIVA());
 
         if (newOrder.getProductsDetails() != null) {
             newOrder.getProductsDetails().forEach(detail -> detail.setCustomerOrder(newOrder));
@@ -132,9 +137,32 @@ public class OrderServiceImpl implements OrderService {
                 .collect(Collectors.toSet());
     }
 
+
     @Override
-    public OrderResDTO addPurchaseOrder(OrderReqDTO orderReqDTO) {
+    public OrderResDTO addPurchaseOrder(String email, OrderReqDTO orderReqDTO) {
+        Optional<User> optionalUser = userRepository.findByEmail(email);
+        //El usuario existe (empleado, admin)?
+        if (optionalUser.isEmpty()) {
+            throw new EntityNotFoundException("El usuario con el correo " + email + " no ha sido encontrado.");
+        }
+        Optional<Provider> optionalProvider = providerRepository.findById(orderReqDTO.getProviderId());
+        //El proveedor existe?
+        if (optionalProvider.isEmpty()) {
+            throw new EntityNotFoundException("El proveedor con el  id " + orderReqDTO.getProviderId()  + " no ha sido encontrado.");
+        }
+
+        User user = optionalUser.get();
+        Provider provider = optionalProvider.get();
+
         PurchaseOrder newOrder = orderMapper.DTOtoPurchaseOrder(orderReqDTO);
+        newOrder.setUser(user);
+        newOrder.setProvider(provider);
+        newOrder.setAproved(false);
+        newOrder.setIVA(orderReqDTO.getIVA());
+
+        if (newOrder.getProductsDetails() != null) {
+            newOrder.getProductsDetails().forEach(detail -> detail.setPurchaseOrder(newOrder));
+        }
         PurchaseOrder savedOrder = purchaseOrderRepository.save(newOrder);
         return orderMapper.purchaseOrderToDTO(savedOrder);
     }
@@ -169,4 +197,6 @@ public class OrderServiceImpl implements OrderService {
         purchaseOrderRepository.save(aprovedPurchaseOrder);
 
     }
+
+
 }

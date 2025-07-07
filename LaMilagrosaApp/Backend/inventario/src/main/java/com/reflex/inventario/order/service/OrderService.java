@@ -18,7 +18,7 @@ public interface OrderService {
     //Purchase order
     OrderResDTO getPurchaseOrderById(Integer id);
     Set<OrderResDTO> getPurchaseOrders();
-    OrderResDTO addPurchaseOrder(OrderReqDTO orderReqDTO);
+    OrderResDTO addPurchaseOrder(String email, OrderReqDTO orderReqDTO);
     OrderResDTO updatePurchaseOrder(Integer id, OrderReqDTO orderReqDTO);
     void deletePurchaseOrder(Integer id);
     void aprovePurchaseOrder(Integer id);

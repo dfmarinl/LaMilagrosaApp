@@ -61,8 +61,9 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
         if(!inventory.isPresent()) {
             throw new ProductNotFoundException("El inventario con id " + id + " no ha sido encontrado.");
         }
-        ProductInventory updatedInventory = inventoryMapper.DtoToInventory(inventoryReq);
-        updatedInventory.setId(id);
+        ProductInventory updatedInventory = inventory.get();
+        updatedInventory.setStock(inventoryReq.getStock());
+
         productInvetoryRepository.save(updatedInventory);
         return inventoryMapper.inventoryToDTO(updatedInventory);
     }

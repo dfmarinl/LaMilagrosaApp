@@ -31,7 +31,7 @@ public class ProductInventoryController {
         return ResponseEntity.accepted().body(productInventoryService.addInventory(inventoryReqDTO));
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ProductInventoryResDTO> updateProduct(
             @PathVariable Integer id,
             @Valid @RequestBody ProductInventoryReqDTO inventoryReqDTO

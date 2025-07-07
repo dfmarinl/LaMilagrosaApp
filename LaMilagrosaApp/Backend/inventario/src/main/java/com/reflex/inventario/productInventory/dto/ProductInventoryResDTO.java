@@ -16,4 +16,6 @@ public class ProductInventoryResDTO {
     private Integer stock;
     private Integer batchNumber;
     private LocalDate expirationDate;
+    private String productName;
+    private String productImage;
 }

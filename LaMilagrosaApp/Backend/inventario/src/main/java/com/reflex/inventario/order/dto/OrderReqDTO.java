@@ -24,5 +24,7 @@ public class OrderReqDTO {
     @Future(message = "La fecha de vencimiento debe ser en el futuro")
     private LocalDate expirationDate;
 
+    private Integer providerId;
+
     private Set<ProductDetailDTO> productsDetails;
 }

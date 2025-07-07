@@ -39,7 +39,7 @@ public class OrderController {
         return ResponseEntity.accepted().body(orderService.addCustomerOrder(email, orderReqDTO));
     }
 
-    @PutMapping("customer/update")
+    @PutMapping("customer/update/{id}")
     public ResponseEntity<OrderResDTO> updateCustomerOrder(
             @PathVariable Integer id,
             @Valid @RequestBody OrderReqDTO orderReqDTO
@@ -78,12 +78,16 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getPurchaseOrderById(id));
     }
 
-    @PostMapping("purchase/register")
-    public ResponseEntity<OrderResDTO> createPurchaseOrder(@Valid  @RequestBody OrderReqDTO orderReqDTO) {
-        return ResponseEntity.accepted().body(orderService.addPurchaseOrder(orderReqDTO));
+    @PostMapping("purchase/register/{email}")
+    public ResponseEntity<OrderResDTO> createPurchaseOrder(
+            @PathVariable String email,
+            @Valid  @RequestBody OrderReqDTO orderReqDTO) {
+        return ResponseEntity.accepted().body(orderService.addPurchaseOrder(email, orderReqDTO));
     }
 
-    @PutMapping("purchase/update")
+
+
+    @PutMapping("purchase/update/{id}")
     public ResponseEntity<OrderResDTO> updatePurchaseOrder(
             @PathVariable Integer id,
             @Valid @RequestBody OrderReqDTO orderReqDTO
@@ -98,7 +102,7 @@ public class OrderController {
     }
 
 
-    @PostMapping("purchase/aproveOrder")
+    @PostMapping("purchase/aproveOrder/{id}")
     public String aprovePruchaseOrder(
             @PathVariable Integer id
     ) {

@@ -41,12 +41,12 @@ public class Product {
             mappedBy = "product")
     private Set<ProductInventory> productInventories;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
    /* @JoinTable(name = "product_productDetail",
     joinColumns = { @JoinColumn(name = "product_code", referencedColumnName = "code")},
     inverseJoinColumns = {@JoinColumn(name="productDetail_id", referencedColumnName = "id")}
     )*/
-    private ProductDetail productDetail;
+    private Set<ProductDetail> productDetails;
 
 
 }

@@ -19,7 +19,8 @@ public class ProductDetail {
     private Integer id;
     private Integer quantity;//cantidad - unidades
 
-    @OneToOne()
+    @ManyToOne()
+    @JoinColumn(name = "product_code", nullable = true )
     private Product product;
 
     @ManyToOne

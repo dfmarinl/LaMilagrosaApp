@@ -32,7 +32,7 @@ public class OrderMapper {
             return ProductDetail.builder()
                     .quantity(detailDto.getQuantity())
                     .product(product)
-                    .customerOrder(order) // 🚨 IMPORTANTE: asignar la orden
+                    .customerOrder(order)
                     .build();
         }).collect(Collectors.toSet());
 

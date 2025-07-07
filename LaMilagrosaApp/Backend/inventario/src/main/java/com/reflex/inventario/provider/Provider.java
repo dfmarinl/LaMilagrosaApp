@@ -19,7 +19,7 @@ public class Provider {
     @GeneratedValue
     private Integer id;
     private String name;
-    private Integer phone;
+    private Long phone;
     private String address;
     private String email;
 

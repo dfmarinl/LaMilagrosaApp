@@ -1,5 +1,7 @@
 package com.reflex.inventario;
 
+import com.reflex.inventario.provider.Provider;
+import com.reflex.inventario.provider.ProviderRepository;
 import com.reflex.inventario.role.Role;
 import com.reflex.inventario.role.RoleName;
 import com.reflex.inventario.role.RoleRepository;
@@ -21,12 +23,21 @@ public class InventarioApplication {
 
 	@Bean
 	public CommandLineRunner runner(
-			RoleRepository roleRepository
+			RoleRepository roleRepository,
+			ProviderRepository providerRepository
 	){
 		return args -> {
 			if(roleRepository.findByName(RoleName.EMPLOYEE).isEmpty()) {
 				roleRepository.save(Role.builder().name(RoleName.EMPLOYEE).build());
 			}
+			var provider = Provider.builder()
+					.name("Proveedor Ejemplo")
+					.phone(3124567890L)
+					.address("Calle 123 #45-67")
+					.email("proveedor@ejemplo.com")
+					.build();
+			providerRepository.save(provider);
 		};
+
 	}
 }
