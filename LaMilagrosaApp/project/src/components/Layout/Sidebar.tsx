@@ -7,7 +7,9 @@ import {
   Truck, 
   BarChart3, 
   User,
-  X
+  X,
+  Bell,
+  Tag
 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 
@@ -30,9 +32,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeSection, onSec
   const employeeMenuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: Home },
     { id: 'productos', label: 'Productos', icon: Package },
+    { id: 'categorias', label: 'Categorías', icon: Tag },
     { id: 'usuarios', label: 'Usuarios', icon: Users },
     { id: 'pedidos', label: 'Pedidos', icon: ShoppingBag },
     { id: 'proveedores', label: 'Proveedores', icon: Truck },
+    { id: 'alertas-stock', label: 'Alertas de Stock', icon: Bell },
     { id: 'reportes', label: 'Reportes', icon: BarChart3 },
   ];
 
