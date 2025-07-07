@@ -11,10 +11,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableJpaAuditing
 @EnableAsync
+@EnableScheduling
 public class InventarioApplication {
 
 	public static void main(String[] args) {
@@ -29,6 +31,9 @@ public class InventarioApplication {
 		return args -> {
 			if(roleRepository.findByName(RoleName.EMPLOYEE).isEmpty()) {
 				roleRepository.save(Role.builder().name(RoleName.EMPLOYEE).build());
+			}
+			if(roleRepository.findByName(RoleName.ADMIN).isEmpty()) {
+				roleRepository.save(Role.builder().name(RoleName.ADMIN).build());
 			}
 			var provider = Provider.builder()
 					.name("Proveedor Ejemplo")

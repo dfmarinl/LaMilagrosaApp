@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Repository
@@ -21,4 +22,6 @@ public interface ProductInvetoryRepository extends JpaRepository<ProductInventor
             @Param("productCode") Integer productCode,
             @Param("quantity") Integer quantity);
 
+    List<ProductInventory> findByExpirationDateLessThanEqual(LocalDate date);
+    List<ProductInventory> findByExpirationDateBetween(LocalDate start, LocalDate end);
 }

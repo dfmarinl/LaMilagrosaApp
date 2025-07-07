@@ -31,7 +31,7 @@ public class ProductController {
         return ResponseEntity.accepted().body(productService.addProduct(productReqDTO));
     }
 
-    @PutMapping("/update")
+    @PutMapping("/update/{id}")
     public ResponseEntity<ProductResDTO> updateProduct(
             @PathVariable Integer id,
             @Valid @RequestBody ProductReqDTO productReqDTO

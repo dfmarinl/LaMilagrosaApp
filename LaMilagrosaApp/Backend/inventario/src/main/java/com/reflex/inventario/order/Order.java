@@ -8,6 +8,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -22,6 +23,7 @@ public class Order {
     private LocalDate date;
     private Integer IVA;
     private Boolean aproved;
+    private LocalDateTime createdAt;
 
 
 }

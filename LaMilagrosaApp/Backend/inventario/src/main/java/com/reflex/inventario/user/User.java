@@ -26,7 +26,7 @@ public class User implements UserDetails, Principal {
     @Id
     @GeneratedValue
     private Integer id;
-    private String name;
+    private String nombre;
     @Column(unique = true, nullable = false)
     private String email;
     private String password;
