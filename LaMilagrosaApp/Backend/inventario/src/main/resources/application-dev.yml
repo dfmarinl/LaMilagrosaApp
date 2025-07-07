@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/inventario_bd
+    username: username
+    password: password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  application:
+    security:
+      jwt:
+        secret-key: 8YLzZtBkPEfLhyiuyY/WIbhA3xVmF8OTz8UtMd6ftX+ubitmV1VOYyc31bUBSZxL
+        expiration: 8640000
+
+  ##  mailing:
+  ##    frontend:
+  ##  activation_url: http://localhost:4200/activate-account
+server:
+  port: 8080
