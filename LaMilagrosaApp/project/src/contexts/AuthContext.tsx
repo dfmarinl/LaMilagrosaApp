@@ -79,24 +79,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const register = async (userData: Omit<User, 'id' | 'createdAt'> & { password: string }): Promise<boolean> => {
-    setLoading(true);
-    try {
-      const newUser: User = {
-        id: Date.now().toString(),
-        email: userData.email,
-        name: userData.name,
-        role: userData.role,
-        phone: userData.phone,
-        createdAt: new Date(),
-      };
-      setUser(newUser);
-      localStorage.setItem('currentUser', JSON.stringify(newUser));
-      return true;
-    } finally {
-      setLoading(false);
-    }
-  };
+ const register = async (userData: Omit<User, 'id' | 'createdAt'> & { password: string }): Promise<boolean> => {
+  setLoading(true);
+  try {
+    const success = await authApi.register({
+      name: userData.name,
+      email: userData.email,
+      password: userData.password
+    });
+    return success;
+  } catch (error) {
+    console.error('Error en register:', error);
+    return false;
+  } finally {
+    setLoading(false);
+  }
+};
 
   const logout = () => {
     setUser(null);
