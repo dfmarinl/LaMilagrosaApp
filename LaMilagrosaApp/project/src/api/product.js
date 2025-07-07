@@ -59,3 +59,17 @@ export const updateProduct = async (productId, productData) => {
     throw error;
   }
 };
+
+
+export const deleteProduct = async (productId) => {
+  try {
+    const response = await axios.delete(
+      `${API_URL}/${productId}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error al eliminar producto:', error);
+    throw error;
+  }
+};
