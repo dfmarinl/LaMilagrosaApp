@@ -15,7 +15,7 @@ const getAuthHeaders = () => {
  * Obtener inventario por ID de producto
  * GET /inventory/{productId}
  */
-export const getInventoryByProductId = async (productId) => {
+export const getInventoryByInventoryId = async (productId) => {
   try {
     const response = await axios.get(
       `${API_URL}/${productId}`,
@@ -28,6 +28,18 @@ export const getInventoryByProductId = async (productId) => {
   }
 };
 
+export const getInventoryByProductId = async (productId) => {
+  try {
+    const response = await axios.get(
+      `${API_URL}/${productId}`,
+      { headers: getAuthHeaders() }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error al obtener inventario:', error);
+    throw error;
+  }
+};
 /**
  * Crear nuevo inventario
  * POST /inventory/create
