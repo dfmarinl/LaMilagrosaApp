@@ -18,4 +18,5 @@ public class ProductInventoryResDTO {
     private LocalDate expirationDate;
     private String productName;
     private String productImage;
+    private Integer productId;
 }

@@ -35,6 +35,7 @@ public class InventoryMapper {
                 .expirationDate(inventory.getExpirationDate())
                 .productImage(inventory.getProduct().getImage())
                 .productName(inventory.getProduct().getName())
+                .productId(inventory.getProduct().getCode())
                 .build();
     }
 }

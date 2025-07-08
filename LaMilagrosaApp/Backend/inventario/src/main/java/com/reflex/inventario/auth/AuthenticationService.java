@@ -45,6 +45,7 @@ public class AuthenticationService {
                 .orElseThrow(() -> new IllegalStateException("Role EMPLOYEE was not initialized"));
         var user = User.builder()
                 .email(request.getEmail())
+                .nombre(request.getName())
                 //Is needed to encode the password
                 .password(passwordEncoder.encode(request.getPassword()))
                 .roles(Set.of(userRole))
