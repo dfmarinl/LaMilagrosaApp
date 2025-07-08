@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { createInventory, updateInventory, getInventoryByProductId } from '../../api/inventory';
+import { createInventory, updateInventory, getInventoryByInventoryId } from '../../api/inventory';
 
 interface InventoryModalProps {
   isOpen: boolean;
@@ -19,25 +19,27 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
   const [stock, setStock] = useState<number>(0);
   const [batchNumber, setBatchNumber] = useState<number>(0);
   const [expirationDate, setExpirationDate] = useState<string>('');
+  const [realProductId, setRealProductId] = useState<string | number>(productId);
   const [loading, setLoading] = useState<boolean>(false);
 
-  // Al abrir modal y si es edición, buscar inventario actual con inventoryId
   useEffect(() => {
     const fetchInventoryForEdit = async () => {
       try {
         if (editingInventory && editingInventory.id) {
           console.log('Buscando inventario con ID:', editingInventory.id);
-          const inventory = await getInventoryByProductId(editingInventory.id); // tu función que recibe inventoryId
+          const inventory = await getInventoryByInventoryId(editingInventory.id);
+
           if (inventory) {
             setStock(Number(inventory.stock) || 0);
             setBatchNumber(Number(inventory.batchNumber) || 0);
             setExpirationDate(inventory.expirationDate || '');
+            setRealProductId(inventory.productId); // guardamos productId real
           }
         } else {
-          // Si no es edición, limpiar campos
           setStock(0);
           setBatchNumber(0);
           setExpirationDate('');
+          setRealProductId(productId);
         }
       } catch (error) {
         console.error('Error al obtener inventario para editar:', error);
@@ -47,7 +49,7 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
     if (isOpen) {
       fetchInventoryForEdit();
     }
-  }, [editingInventory, isOpen]);
+  }, [editingInventory, isOpen, productId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,41 +57,21 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
 
     try {
       let newInventory;
-      const realProductId = editingInventory?.productId ?? productId;
+
+      const payload = {
+        stock: Number(stock),
+        batchNumber: Number(batchNumber),
+        expirationDate: expirationDate,
+        productId: realProductId
+      };
 
       if (editingInventory) {
-        // Actualizar inventario existente
-        const payload = {
-          stock: Number(stock),
-          batchNumber: Number(batchNumber),
-          expirationDate: expirationDate,
-          // Si tu API requiere productId, puedes incluirlo aquí
-          // productId: realProductId
-        };
-        console.log('Enviando a updateInventory:', payload);
-        console.log('ID del inventario a actualizar:', editingInventory.id);
-
+        console.log('Actualizando inventario ID:', editingInventory.id, 'con datos:', payload);
         newInventory = await updateInventory(editingInventory.id, payload);
-
-        // Unir datos para actualizar en UI
-        newInventory = {
-          ...editingInventory,
-          ...newInventory,
-          id: editingInventory.id,
-          productId: realProductId,
-          stock: Number(stock),
-          batchNumber: Number(batchNumber),
-          expirationDate: expirationDate,
-        };
+        // Opcional: incluir productId en el objeto que envías a onSave
+        newInventory = { ...newInventory, id: editingInventory.id, productId: realProductId };
       } else {
-        // Crear nuevo inventario
-        const payload = {
-          stock: Number(stock),
-          batchNumber: Number(batchNumber),
-          expirationDate: expirationDate,
-          productId: realProductId
-        };
-        console.log('Enviando a createInventory:', payload);
+        console.log('Creando nuevo inventario con datos:', payload);
         newInventory = await createInventory(payload);
       }
 
@@ -98,9 +80,6 @@ const InventoryModal: React.FC<InventoryModalProps> = ({
       onClose();
     } catch (error) {
       console.error('Error al guardar inventario:', error);
-      console.error('Detalles:', error.response?.data || error.message);
-      console.error('Status:', error.response?.status);
-
       const errorMessage =
         error.response?.data?.message ||
         error.response?.data?.error ||
