@@ -11,6 +11,7 @@ export async function login(email, password) {
     const token = response.data.token;
     if (token) {
       localStorage.setItem('authToken', token);
+       localStorage.setItem('userEmail', email);
     } else {
       console.warn('No se recibió token en la respuesta');
     }
