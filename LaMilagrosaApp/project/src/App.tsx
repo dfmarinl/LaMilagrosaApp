@@ -14,9 +14,8 @@ const App: React.FC = () => {
   const { user, loading } = useAuth();
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState(
-    user?.role?.toUpperCase() === 'EMPLOYEE' ? 'dashboard' : 'productos'
-  );
+  
+  const [activeSection, setActiveSection] = useState('dashboard');
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   if (loading) {
@@ -50,11 +49,9 @@ const App: React.FC = () => {
             {/* Main content */}
             {/* Cambié de md:ml-60 a md:ml-48 para que el contenido se corra menos */}
             <main className="flex-1 md:ml-35 p-6 bg-gray-50 min-h-screen">
-              {user?.role?.toUpperCase() === 'EMPLOYEE' ? (
+              
                 <EmployeeDashboard activeSection={activeSection} />
-              ) : (
-                <UserDashboard activeSection={activeSection} />
-              )}
+              
             </main>
           </div>
         </>
@@ -80,7 +77,6 @@ const App: React.FC = () => {
 };
 
 export default App;
-
 
 
 

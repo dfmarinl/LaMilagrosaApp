@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeSection, onSec
     { id: 'reportes', label: 'Reportes', icon: BarChart3 },
   ];
 
-  const menuItems = user?.role?.toUpperCase() === 'EMPLOYEE' ? employeeMenuItems : userMenuItems;
+  const menuItems = user?.role?.toUpperCase() === 'EMPLOYEE' || 'ADMIN'? employeeMenuItems : userMenuItems;
 
   return (
     <>

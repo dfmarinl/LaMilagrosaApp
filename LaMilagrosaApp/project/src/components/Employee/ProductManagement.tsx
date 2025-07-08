@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Search, Filter, PackagePlus } from 'lucide-react';
 import { getAllProducts, deleteProduct } from '../../api/product';
 import { getInventoryByProductId, getAllInventories, deleteInventory } from '../../api/inventory';
+import { getAllCategories } from '../../api/category';
 import { Product } from '../../types';
 import ProductModal from '../Products/ProductModal';
 import InventoryModal from '../Products/InventoryModal';
@@ -10,6 +11,7 @@ const ProductManagement: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [inventories, setInventories] = useState<Record<string | number, any>>({});
   const [allInventories, setAllInventories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,28 +20,28 @@ const ProductManagement: React.FC = () => {
   const [selectedProductCode, setSelectedProductCode] = useState<string | number | null>(null);
   const [editingInventory, setEditingInventory] = useState<any | null>(null);
 
-  const categories = ['all', 'Jamones', 'Embutidos', 'Quesos', 'Conservas', 'Vinos', 'Aceites'];
-
   useEffect(() => {
     const fetchData = async () => {
       try {
         const data = await getAllProducts();
-        const mappedProducts = data.map((p: any) => ({ ...p, id: p.code }));
-        setProducts(mappedProducts);
+        setProducts(data.map((p: any) => ({ ...p, id: p.code })));
 
         const inventoryData: Record<string | number, any> = {};
-        for (const product of mappedProducts) {
+        for (const product of data) {
           try {
             const inventory = await getInventoryByProductId(product.code);
-            inventoryData[product.id] = inventory;
+            inventoryData[product.code] = inventory;
           } catch {
-            inventoryData[product.id] = null;
+            inventoryData[product.code] = null;
           }
         }
         setInventories(inventoryData);
 
         const inventoriesList = await getAllInventories();
         setAllInventories(inventoriesList);
+
+        const categoryList = await getAllCategories();
+        setCategories(categoryList);
       } catch (error) {
         console.error('Error al cargar datos:', error);
       }
@@ -49,7 +51,7 @@ const ProductManagement: React.FC = () => {
 
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-    (selectedCategory === 'all' || product.category === selectedCategory)
+    (selectedCategory === 'all' || product.category?.id === Number(selectedCategory))
   );
 
   const formatPrice = (price: number) =>
@@ -90,7 +92,7 @@ const ProductManagement: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Productos */}
+      {/* Gestión de Productos */}
       <div className="bg-white rounded-lg shadow-sm p-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
           <h1 className="text-2xl font-bold text-gray-800">Gestión de Productos</h1>
@@ -125,9 +127,10 @@ const ProductManagement: React.FC = () => {
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 bg-white"
             >
-              {categories.map((category) => (
-                <option key={category} value={category}>
-                  {category === 'all' ? 'Todas las categorías' : category}
+              <option value="all">Todas las categorías</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
                 </option>
               ))}
             </select>
@@ -157,11 +160,6 @@ const ProductManagement: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  {/* <td className="px-6 py-4">
-                    <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
-                      {product.category || 'N/A'}
-                    </span>
-                  </td> */}
                   <td className="px-6 py-4">
                     <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
                       {product.category?.name || 'N/A'}
@@ -287,6 +285,9 @@ const ProductManagement: React.FC = () => {
 };
 
 export default ProductManagement;
+
+
+
 
 
 
