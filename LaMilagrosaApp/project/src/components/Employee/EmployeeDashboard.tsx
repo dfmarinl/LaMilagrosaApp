@@ -44,9 +44,10 @@ const EmployeeDashboard: React.FC<EmployeeDashboardProps> = ({ activeSection }) 
   if (activeSection === 'reportes') {
     return <Reports />;
   }
+  
 
   // Dashboard overview
-  const stats = [
+ const stats= [
     {
       title: 'Ventas del Mes',
       value: '$2,450,000',

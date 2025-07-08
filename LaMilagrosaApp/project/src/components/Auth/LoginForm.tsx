@@ -1,20 +1,16 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, Store } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom'; // 👈 importamos useNavigate
+import { useNavigate } from 'react-router-dom';
 
-interface LoginFormProps {
-  onToggleForm: () => void;
-}
-
-const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
+const LoginForm: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
-  const navigate = useNavigate(); // 👈 inicializamos navigate
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,7 +20,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
     try {
       const success = await login(email, password);
       if (success) {
-        navigate('/employee-dashboard'); // 👈 redirigimos después de login exitoso
+        navigate('/employee-dashboard');
       } else {
         setError('Email o contraseña incorrectos');
       }
@@ -42,9 +38,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
           <div className="flex justify-center">
             <Store className="h-12 w-12 text-red-600" />
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Iniciar Sesión
-          </h2>
+          <h2 className="mt-6 text-3xl font-bold text-gray-900">Iniciar Sesión</h2>
           <p className="mt-2 text-sm text-gray-600">
             Accede a tu cuenta en Salsamentaria Gourmet
           </p>
@@ -53,9 +47,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email
-              </label>
+              <label htmlFor="email" className="sr-only">Email</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Mail className="h-5 w-5 text-gray-400" />
@@ -74,9 +66,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
             </div>
 
             <div>
-              <label htmlFor="password" className="sr-only">
-                Contraseña
-              </label>
+              <label htmlFor="password" className="sr-only">Contraseña</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                   <Lock className="h-5 w-5 text-gray-400" />
@@ -107,9 +97,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
           </div>
 
           {error && (
-            <div className="text-red-600 text-sm text-center">
-              {error}
-            </div>
+            <div className="text-red-600 text-sm text-center">{error}</div>
           )}
 
           <div>
@@ -127,20 +115,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
               ¿No tienes una cuenta?{' '}
               <button
                 type="button"
-                onClick={onToggleForm}
+                onClick={() => navigate('/register')}
                 className="font-medium text-red-600 hover:text-red-500"
               >
                 Regístrate aquí
               </button>
             </p>
-          </div>
-
-          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-800 font-medium mb-2">Cuentas de prueba:</p>
-            <div className="text-xs text-blue-700 space-y-1">
-              <p><strong>Empleado:</strong> admin@salsamentaria.com / admin123</p>
-              <p><strong>Cliente:</strong> cliente@example.com / cliente123</p>
-            </div>
           </div>
         </form>
       </div>
@@ -149,3 +129,4 @@ const LoginForm: React.FC<LoginFormProps> = ({ onToggleForm }) => {
 };
 
 export default LoginForm;
+

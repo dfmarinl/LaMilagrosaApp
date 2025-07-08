@@ -31,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, activeSection, onSec
   ];
 
   const employeeMenuItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
+
     { id: 'ventas', label: 'Ventas', icon: CreditCard },
     { id: 'productos', label: 'Productos', icon: Package },
     { id: 'categorias', label: 'Categorías', icon: Tag },
