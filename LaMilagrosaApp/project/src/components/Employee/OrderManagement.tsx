@@ -12,11 +12,11 @@ import {
 import { getAllProducts } from '../../api/product';
 import {
   getAllPurchaseOrders,
-  registerPurchaseOrder,
+  createPurchaseOrder,
   approvePurchaseOrder,
   deletePurchaseOrder
 } from '../../api/purchase';
-import { getAllProviders } from '../../api/provider';
+import { getAllProviders } from '../../api/providers';
 import { Product, Provider } from '../../types';
 
 interface PurchaseItem {
@@ -114,10 +114,11 @@ const OrderManagement: React.FC = () => {
       alert('El carrito está vacío.');
       return;
     }
+
     const order = {
-      providerCode: Number(selectedProvider),
+      providerId: Number(selectedProvider),
       date: new Date().toISOString().split('T')[0],
-      IVA: 19,
+      iva: 19,
       expirationDate: '2025-12-31',
       productsDetails: cart.map(item => ({
         productCode: Number(item.product.id),
@@ -125,9 +126,11 @@ const OrderManagement: React.FC = () => {
       }))
     };
 
+
     try {
       setLoading(true);
-      await registerPurchaseOrder(order);
+      const email = localStorage.getItem('userEmail');
+      await createPurchaseOrder(email, order);
       alert('Orden de compra registrada');
       clearCart();
       await refreshOrders();
@@ -200,7 +203,7 @@ const OrderManagement: React.FC = () => {
               <img src={product.image} alt={product.name} className="w-16 h-16 object-cover rounded-lg" />
               <div className="flex-1">
                 <h3 className="font-semibold text-gray-800">{product.name}</h3>
-                <p className="text-sm text-gray-600">{product.category}</p>
+                <p className="text-sm text-gray-600">{product.category?.name || 'Sin categoría'}</p>
                 <p className="text-lg font-bold text-red-600">{formatPrice(product.price)}</p>
               </div>
               <button onClick={() => addToCart(product)} className="bg-red-600 text-white p-2 rounded-lg hover:bg-red-700">
@@ -284,7 +287,7 @@ const OrderManagement: React.FC = () => {
                 <tr key={order.number} className="border-t">
                   <td className="px-4 py-2 border">{order.number}</td>
                   <td className="px-4 py-2 border">{order.date}</td>
-                  <td className="px-4 py-2 border">{order.providerName || '-'}</td>
+                  <td className="px-4 py-2 border">{order.providerId || '-'}</td>
                   <td className="px-4 py-2 border">{order.iva}%</td>
                   <td className="px-4 py-2 border">{order.aproved ? 'Aprobada' : 'Pendiente'}</td>
                   <td className="px-4 py-2 border space-x-2">

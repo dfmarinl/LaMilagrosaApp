@@ -157,9 +157,14 @@ const ProductManagement: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  {/* <td className="px-6 py-4">
                     <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
                       {product.category || 'N/A'}
+                    </span>
+                  </td> */}
+                  <td className="px-6 py-4">
+                    <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-800 rounded-full">
+                      {product.category?.name || 'N/A'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900">{formatPrice(product.price)}</td>
