@@ -11,6 +11,7 @@ export const mockProducts: Product[] = [
     stock: 25,
     isActive: true,
     createdAt: new Date('2024-01-01'),
+    expirationDate: '2025-07-10' // vence pronto
   },
   {
     id: '2',
@@ -19,9 +20,10 @@ export const mockProducts: Product[] = [
     price: 18000,
     image: 'https://images.pexels.com/photos/4958790/pexels-photo-4958790.jpeg?auto=compress&cs=tinysrgb&w=800',
     category: 'Embutidos',
-    stock: 40,
+    stock: 3, // stock crítico
     isActive: true,
     createdAt: new Date('2024-01-01'),
+    expirationDate: '2025-07-05' // muy pronto a vencer
   },
   {
     id: '3',
@@ -30,9 +32,10 @@ export const mockProducts: Product[] = [
     price: 32000,
     image: 'https://images.pexels.com/photos/4109943/pexels-photo-4109943.jpeg?auto=compress&cs=tinysrgb&w=800',
     category: 'Quesos',
-    stock: 20,
+    stock: 0, // agotado
     isActive: true,
     createdAt: new Date('2024-01-01'),
+    expirationDate: '2025-07-03' // vencido
   },
   {
     id: '4',
@@ -41,9 +44,10 @@ export const mockProducts: Product[] = [
     price: 28000,
     image: 'https://images.pexels.com/photos/4958791/pexels-photo-4958791.jpeg?auto=compress&cs=tinysrgb&w=800',
     category: 'Embutidos',
-    stock: 30,
+    stock: 8, // bajo stock
     isActive: true,
     createdAt: new Date('2024-01-01'),
+    expirationDate: '2025-08-15'
   },
   {
     id: '5',
@@ -55,6 +59,7 @@ export const mockProducts: Product[] = [
     stock: 50,
     isActive: true,
     createdAt: new Date('2024-01-01'),
+    expirationDate: '2025-09-01'
   },
   {
     id: '6',
@@ -66,43 +71,6 @@ export const mockProducts: Product[] = [
     stock: 15,
     isActive: true,
     createdAt: new Date('2024-01-01'),
-  },
-];
-
-export const mockOrders: Order[] = [
-  {
-    id: '1',
-    userId: '2',
-    items: [
-      { product: mockProducts[0], quantity: 1 },
-      { product: mockProducts[1], quantity: 2 },
-    ],
-    total: 81000,
-    status: 'pending',
-    createdAt: new Date('2024-01-20'),
-    deliveryAddress: 'Calle 123 #45-67, Bogotá',
-  },
-];
-
-export const mockSupplierOrders: SupplierOrder[] = [
-  {
-    id: '1',
-    productId: '1',
-    quantity: 50,
-    unitPrice: 35000,
-    supplierName: 'Ibéricos del Sur',
-    status: 'pending',
-    createdAt: new Date('2024-01-15'),
-    expectedDelivery: new Date('2024-02-01'),
-  },
-  {
-    id: '2',
-    productId: '2',
-    quantity: 100,
-    unitPrice: 14000,
-    supplierName: 'Embutidos Tradicionales',
-    status: 'ordered',
-    createdAt: new Date('2024-01-10'),
-    expectedDelivery: new Date('2024-01-25'),
+    expirationDate: '2026-01-01'
   },
 ];
