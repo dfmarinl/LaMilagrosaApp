@@ -19,18 +19,25 @@ public class ProductMapper {
     private final CategoryMapper categoryMapper;
 
     public Product DtoToProduct(ProductReqDTO productReqDTO) {
-        // Buscar la categoría
-        Category category = categoryRepository.findById(productReqDTO.getCategoryId())
-                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+        Integer categoryId = productReqDTO.getCategoryId();
 
-        return Product.builder()
+        Product.ProductBuilder builder = Product.builder()
                 .name(productReqDTO.getName())
                 .description(productReqDTO.getDescription())
                 .price(productReqDTO.getPrice())
-                .image(productReqDTO.getImage())
-                .categories(Set.of(category)) // Construir el Set con una sola categoría
-                .build();
+                .image(productReqDTO.getImage());
+
+        if (categoryId != null) {
+            Category category = categoryRepository.findById(categoryId)
+                    .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+            builder.categories(Set.of(category));
+        } else {
+            builder.categories(Set.of()); // Categoría vacía en vez de null
+        }
+
+        return builder.build();
     }
+
 
     public ProductResDTO productToDTO(Product product) {
         return ProductResDTO.builder()
