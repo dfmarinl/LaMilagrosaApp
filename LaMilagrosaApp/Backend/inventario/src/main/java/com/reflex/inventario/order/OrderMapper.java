@@ -10,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +24,7 @@ public class OrderMapper {
         var order = CustomerOrder.builder()
                 .date(orderReqDTO.getDate())
                 .IVA(orderReqDTO.getIVA())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         Set<ProductDetail> details = orderReqDTO.getProductsDetails().stream().map(detailDto -> {
@@ -51,12 +53,25 @@ public class OrderMapper {
 
 
     public PurchaseOrder DTOtoPurchaseOrder(OrderReqDTO orderReqDTO) {
-        return PurchaseOrder.builder()
+        var order = PurchaseOrder.builder()
                 .date(orderReqDTO.getDate())
                 .IVA(orderReqDTO.getIVA())
+                .createdAt(LocalDateTime.now())
                 .build();
+        Set<ProductDetail> details = orderReqDTO.getProductsDetails().stream().map(detailDto -> {
+            Product product = productRepository.findById(detailDto.getProductCode())
+                    .orElseThrow(() -> new EntityNotFoundException("Producto no encontrado con código: " + detailDto.getProductCode()));
 
-    }
+            return ProductDetail.builder()
+                    .quantity(detailDto.getQuantity())
+                    .product(product)
+                    .purchaseOrder(order)
+                    .build();
+        }).collect(Collectors.toSet());
+
+        order.setProductsDetails(details);
+        return order;
+        }
 
     public OrderResDTO purchaseOrderToDTO(PurchaseOrder purchaseOrder) {
         return OrderResDTO.builder()
