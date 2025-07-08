@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { registerProduct, updateProduct } from '../../api/product';
+import { getAllCategories } from '../../api/category';
+import { uploadProductImage } from '../../api/productImg';
 import { Product } from '../../types';
-
-// ✅ ejemplo: subir imagen y obtener URL
-const uploadImage = async (file: File): Promise<string> => {
-  // aquí iría la lógica real (p.ej., subir a Cloudinary)
-  // simulado:
-  return new Promise((resolve) => {
-    setTimeout(() => resolve(URL.createObjectURL(file)), 1000);
-  });
-};
 
 type Props = {
   isOpen: boolean;
@@ -29,6 +22,7 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
     isActive: true,
   });
   const [uploading, setUploading] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
     if (editingProduct) {
@@ -46,6 +40,19 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
     }
   }, [editingProduct]);
 
+  // Cargar categorías desde el backend
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getAllCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error al cargar categorías:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm(prev => ({
@@ -59,10 +66,11 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
     if (file) {
       setUploading(true);
       try {
-        const url = await uploadImage(file);
+        const url = await uploadProductImage(file);
         setForm(prev => ({ ...prev, image: url }));
       } catch (error) {
         console.error('Error al subir imagen:', error);
+        alert('Error al subir imagen. Intenta de nuevo.');
       } finally {
         setUploading(false);
       }
@@ -81,6 +89,7 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
       onClose();
     } catch (error) {
       console.error('Error al guardar producto:', error);
+      alert('Error al guardar producto. Revisa la consola.');
     }
   };
 
@@ -114,14 +123,12 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
             value={form.category || ''}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
+            
           >
             <option value="">Selecciona una categoría</option>
-            <option value="Jamones">Jamones</option>
-            <option value="Embutidos">Embutidos</option>
-            <option value="Quesos">Quesos</option>
-            <option value="Conservas">Conservas</option>
-            <option value="Vinos">Vinos</option>
-            <option value="Aceites">Aceites</option>
+            {categories.map(cat => (
+              <option key={cat.id} value={cat.id}>{cat.name}</option>
+            ))}
           </select>
           <input
             type="number"
@@ -141,8 +148,6 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
             className="w-full border px-3 py-2 rounded"
             required
           />
-
-          {/* campo de imagen */}
           <input
             type="file"
             accept="image/*"
@@ -169,10 +174,4 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
 };
 
 export default ProductModal;
-
-
-
-
-
-
 
