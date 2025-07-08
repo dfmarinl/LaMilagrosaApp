@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createProvider, updateProvider } from '../../api/providers';
 
 interface Supplier {
   id?: number | string;
@@ -27,6 +28,7 @@ const ModalProveedor: React.FC<ModalProveedorProps> = ({
     address: '',
     email: '',
   });
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (editingSupplier) {
@@ -49,17 +51,34 @@ const ModalProveedor: React.FC<ModalProveedorProps> = ({
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    setLoading(true);
+    try {
+      let savedSupplier;
+      if (editingSupplier && editingSupplier.id) {
+        // Editar proveedor
+        savedSupplier = await updateProvider(editingSupplier.id, formData);
+      } else {
+        // Crear nuevo proveedor
+        savedSupplier = await createProvider(formData);
+      }
+      onSave(savedSupplier);
+      onClose();
+    } catch (error) {
+      console.error('Error al guardar proveedor:', error);
+      alert('Error al guardar proveedor. Revisa la consola para más detalles.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md">
-        <h2 className="text-xl font-bold mb-4">
+      <div className="bg-white rounded-lg p-6 w-full max-w-md space-y-4">
+        <h2 className="text-xl font-bold">
           {editingSupplier ? 'Editar Proveedor' : 'Registrar Proveedor'}
         </h2>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -76,7 +95,7 @@ const ModalProveedor: React.FC<ModalProveedorProps> = ({
             type="number"
             value={formData.phone}
             onChange={handleChange}
-            placeholder="Número de teléfono 7"
+            placeholder="Número de teléfono"
             className="w-full px-3 py-2 border border-gray-300 rounded"
             required
           />
@@ -101,15 +120,17 @@ const ModalProveedor: React.FC<ModalProveedorProps> = ({
             <button
               type="button"
               onClick={onClose}
+              disabled={loading}
               className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
             >
               Cancelar
             </button>
             <button
               type="submit"
+              disabled={loading}
               className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
             >
-              Guardar
+              {loading ? 'Guardando...' : 'Guardar'}
             </button>
           </div>
         </form>
@@ -119,4 +140,6 @@ const ModalProveedor: React.FC<ModalProveedorProps> = ({
 };
 
 export default ModalProveedor;
+
+
 

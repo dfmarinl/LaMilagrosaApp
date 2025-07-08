@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Search } from 'lucide-react';
-import ModalProveedor from '../Products/ModalProveedor'; // importa tu modal
-// import { getAllSuppliers, deleteSupplier, createSupplier, updateSupplier } from '../../api/supplier';
+import ModalProveedor from '../Products/ModalProveedor';
+import { getAllProviders, createProvider, updateProvider, deleteProvider } from '../../api/providers';
 
 const SupplierManagement: React.FC = () => {
   const [suppliers, setSuppliers] = useState<any[]>([]);
@@ -10,17 +10,17 @@ const SupplierManagement: React.FC = () => {
   const [editingSupplier, setEditingSupplier] = useState<any | null>(null);
 
   useEffect(() => {
-    const fetchSuppliers = async () => {
-      try {
-        // const data = await getAllSuppliers();
-        // setSuppliers(data);
-        console.log('Aquí llamarías a getAllSuppliers() y actualizarías el estado');
-      } catch (error) {
-        console.error('Error al cargar proveedores:', error);
-      }
-    };
     fetchSuppliers();
   }, []);
+
+  const fetchSuppliers = async () => {
+    try {
+      const data = await getAllProviders();
+      setSuppliers(data);
+    } catch (error) {
+      console.error('Error al cargar proveedores:', error);
+    }
+  };
 
   const filteredSuppliers = suppliers.filter(supplier =>
     supplier.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -40,10 +40,11 @@ const SupplierManagement: React.FC = () => {
   const handleDeleteSupplier = async (supplierId: string | number) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar este proveedor?')) {
       try {
-        // await deleteSupplier(supplierId);
+        await deleteProvider(supplierId);
         setSuppliers(prev => prev.filter(s => s.id !== supplierId));
       } catch (error) {
         console.error('Error al eliminar proveedor:', error);
+        alert('Error al eliminar proveedor');
       }
     }
   };
@@ -51,19 +52,21 @@ const SupplierManagement: React.FC = () => {
   const handleSaveSupplier = async (supplierData: any) => {
     try {
       if (editingSupplier) {
-        // await updateSupplier(editingSupplier.id, supplierData);
+        // Editar proveedor
+        const updated = await updateProvider(editingSupplier.id, supplierData);
         setSuppliers(prev =>
-          prev.map(s => (s.id === editingSupplier.id ? { ...s, ...supplierData } : s))
+          prev.map(s => (s.id === editingSupplier.id ? updated : s))
         );
       } else {
-        // const newSupplier = await createSupplier(supplierData);
-        const newSupplier = { ...supplierData, id: Date.now() }; // temporal
+        // Crear nuevo proveedor
+        const newSupplier = await createProvider(supplierData);
         setSuppliers(prev => [...prev, newSupplier]);
       }
       setIsModalOpen(false);
       setEditingSupplier(null);
     } catch (error) {
       console.error('Error al guardar proveedor:', error);
+      alert('Error al guardar proveedor');
     }
   };
 
@@ -96,43 +99,43 @@ const SupplierManagement: React.FC = () => {
         </div>
 
         {/* Tabla */}
-<div className="overflow-x-auto">
-  <table className="w-full table-auto">
-    <thead className="bg-gray-50">
-      <tr>
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teléfono</th>
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dirección</th>
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
-      </tr>
-    </thead>
-    <tbody className="bg-white divide-y divide-gray-200">
-      {filteredSuppliers.map(supplier => (
-        <tr key={supplier.id} className="hover:bg-gray-50">
-          <td className="px-6 py-4">{supplier.name}</td>
-          <td className="px-6 py-4">{supplier.email}</td>
-          <td className="px-6 py-4">{supplier.phone}</td>
-          <td className="px-6 py-4">{supplier.address}</td>
-          <td className="px-6 py-4 space-x-2">
-            <button
-              onClick={() => handleEditSupplier(supplier)}
-              className="text-blue-600 hover:text-blue-900"
-            >
-              <Edit2 className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => handleDeleteSupplier(supplier.id)}
-              className="text-red-600 hover:text-red-900"
-            >
-              <Trash2 className="h-4 w-4" />
-            </button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+        <div className="overflow-x-auto">
+          <table className="w-full table-auto">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Teléfono</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Dirección</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredSuppliers.map(supplier => (
+                <tr key={supplier.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4">{supplier.name}</td>
+                  <td className="px-6 py-4">{supplier.email}</td>
+                  <td className="px-6 py-4">{supplier.phone}</td>
+                  <td className="px-6 py-4">{supplier.address}</td>
+                  <td className="px-6 py-4 space-x-2">
+                    <button
+                      onClick={() => handleEditSupplier(supplier)}
+                      className="text-blue-600 hover:text-blue-900"
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteSupplier(supplier.id)}
+                      className="text-red-600 hover:text-red-900"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
         {filteredSuppliers.length === 0 && (
           <div className="text-center py-12">
@@ -141,7 +144,7 @@ const SupplierManagement: React.FC = () => {
         )}
       </div>
 
-      {/* ✅ ModalProveedor */}
+      {/* ModalProveedor */}
       <ModalProveedor
         isOpen={isModalOpen}
         onClose={() => {
