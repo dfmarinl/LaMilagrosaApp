@@ -19,22 +19,10 @@ const Header: React.FC<HeaderProps> = ({ onCartClick, onMenuClick }) => {
           {/* Logo */}
           <div className="flex items-center space-x-2">
             <Store className="h-8 w-8 text-yellow-400" />
-            <h1 className="text-2xl font-bold">Salsamentaria Gourmet</h1>
+            <h1 className="text-2xl font-bold">LaMilagrosaApp</h1>
           </div>
 
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            <a href="#productos" className="hover:text-yellow-400 transition-colors">
-              Productos
-            </a>
-            <a href="#sobre-nosotros" className="hover:text-yellow-400 transition-colors">
-              Sobre Nosotros
-            </a>
-            <a href="#contacto" className="hover:text-yellow-400 transition-colors">
-              Contacto
-            </a>
-          </nav>
-
+    
           {/* User Actions */}
           <div className="flex items-center space-x-4">
             {user?.role === 'user' && (
