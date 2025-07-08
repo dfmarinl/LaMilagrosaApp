@@ -35,8 +35,7 @@ const SalesModule: React.FC = () => {
           description: item.description,
           price: item.price,
           image: item.image || 'https://via.placeholder.com/100',
-          category:  item.category?.name || 'Otros',
-          stock: 50,
+          category: item.category?.name || 'Otros',
           isActive: true,
         }));
         setProducts(adaptedProducts);
@@ -73,19 +72,16 @@ const SalesModule: React.FC = () => {
   const filteredProducts = products.filter(product => {
     const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
-    return matchesSearch && matchesCategory && product.isActive && product.stock > 0;
+    return matchesSearch && matchesCategory && product.isActive;
   });
 
   const addToCart = (product: Product) => {
     setCart(currentCart => {
       const existingItem = currentCart.find(item => item.product.id === product.id);
       if (existingItem) {
-        if (existingItem.quantity < product.stock) {
-          return currentCart.map(item =>
-            item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
-          );
-        }
-        return currentCart;
+        return currentCart.map(item =>
+          item.product.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+        );
       }
       return [...currentCart, { product, quantity: 1 }];
     });
@@ -98,7 +94,7 @@ const SalesModule: React.FC = () => {
     }
     setCart(currentCart =>
       currentCart.map(item =>
-        item.product.id === productId ? { ...item, quantity: Math.min(quantity, item.product.stock) } : item
+        item.product.id === productId ? { ...item, quantity } : item
       )
     );
   };
@@ -215,7 +211,6 @@ const SalesModule: React.FC = () => {
                       <h3 className="font-semibold text-gray-800">{product.name}</h3>
                       <p className="text-sm text-gray-600">{product.category}</p>
                       <p className="text-lg font-bold text-red-600">{formatPrice(product.price)}</p>
-                      <p className="text-xs text-gray-500">Stock: {product.stock}</p>
                     </div>
                     <button
                       onClick={() => addToCart(product)}
@@ -374,6 +369,7 @@ const SalesModule: React.FC = () => {
 };
 
 export default SalesModule;
+
 
 
 

@@ -269,9 +269,16 @@ const ProductManagement: React.FC = () => {
           setEditingInventory(null);
         }}
         onSave={(newInventory) => {
-          setAllInventories((prev) =>
-            prev.map((inv) => (inv.id === newInventory.id ? newInventory : inv))
-          );
+          setAllInventories((prev) => {
+            const exists = prev.find((inv) => inv.id === newInventory.id);
+            if (exists) {
+              return prev.map((inv) =>
+                inv.id === newInventory.id ? newInventory : inv
+              );
+            } else {
+              return [...prev, newInventory];
+            }
+          });
           if (newInventory.productId) {
             setInventories((prev) => ({
               ...prev,
@@ -285,6 +292,7 @@ const ProductManagement: React.FC = () => {
 };
 
 export default ProductManagement;
+
 
 
 
