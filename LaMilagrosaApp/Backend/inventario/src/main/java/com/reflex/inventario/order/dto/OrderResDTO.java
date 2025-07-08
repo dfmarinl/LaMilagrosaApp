@@ -14,4 +14,5 @@ public class OrderResDTO {
     private LocalDate date;
     private Integer IVA;
     private Boolean aproved;
+    private Integer providerId;
 }

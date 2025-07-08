@@ -64,6 +64,7 @@ public class OrderMapper {
                 .date(purchaseOrder.getDate())
                 .IVA(purchaseOrder.getIVA())
                 .aproved(purchaseOrder.getAproved())
+                .providerId(purchaseOrder.getProvider().getId())
                 .build();
     }
 }
