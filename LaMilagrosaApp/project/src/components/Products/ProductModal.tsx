@@ -12,35 +12,46 @@ type Props = {
 };
 
 const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave }) => {
-  const [form, setForm] = useState<Partial<Product>>({
+  const [form, setForm] = useState<{
+    name: string;
+    description: string;
+    categoryId: number | '';
+    price: number;
+    stock: number;
+    image: string;
+  }>({
     name: '',
     description: '',
-    category: '',
+    categoryId: '',
     price: 0,
     stock: 0,
     image: '',
-    isActive: true,
   });
   const [uploading, setUploading] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
     if (editingProduct) {
-      setForm(editingProduct);
+      setForm({
+        name: editingProduct.name,
+        description: editingProduct.description,
+        categoryId: editingProduct.category?.id || '',
+        price: editingProduct.price,
+        stock: editingProduct.stock,
+        image: editingProduct.image,
+      });
     } else {
       setForm({
         name: '',
         description: '',
-        category: '',
+        categoryId: '',
         price: 0,
         stock: 0,
         image: '',
-        isActive: true,
       });
     }
   }, [editingProduct]);
 
-  // Cargar categorías desde el backend
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -57,7 +68,7 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
     const { name, value } = e.target;
     setForm(prev => ({
       ...prev,
-      [name]: name === 'price' || name === 'stock' ? Number(value) : value
+      [name]: name === 'price' || name === 'stock' || name === 'categoryId' ? Number(value) : value
     }));
   };
 
@@ -80,10 +91,19 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const productData = {
+        name: form.name,
+        description: form.description,
+        price: form.price,
+        stock: form.stock,
+        image: form.image,
+        categoryId: form.categoryId,
+      };
+
       if (editingProduct) {
-        await updateProduct(form.code!, form);
+        await updateProduct(editingProduct.code!, productData);
       } else {
-        await registerProduct(form);
+        await registerProduct(productData);
       }
       await onSave();
       onClose();
@@ -105,7 +125,7 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
           <input
             name="name"
             placeholder="Nombre"
-            value={form.name || ''}
+            value={form.name}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
             required
@@ -113,17 +133,17 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
           <input
             name="description"
             placeholder="Descripción"
-            value={form.description || ''}
+            value={form.description}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
             required
           />
           <select
-            name="category"
-            value={form.category || ''}
+            name="categoryId"
+            value={form.categoryId}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
-            
+            required
           >
             <option value="">Selecciona una categoría</option>
             {categories.map(cat => (
@@ -134,7 +154,7 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
             type="number"
             name="price"
             placeholder="Precio"
-            value={form.price ?? 0}
+            value={form.price}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
             required
@@ -143,7 +163,7 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
             type="number"
             name="stock"
             placeholder="Stock"
-            value={form.stock ?? 0}
+            value={form.stock}
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
             required
@@ -158,7 +178,6 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
           {form.image && (
             <img src={form.image} alt="Vista previa" className="h-24 mt-2 rounded" />
           )}
-
           <div className="flex justify-end space-x-2">
             <button type="button" onClick={onClose} className="px-4 py-2 border rounded">
               Cancelar
@@ -174,4 +193,6 @@ const ProductModal: React.FC<Props> = ({ isOpen, editingProduct, onClose, onSave
 };
 
 export default ProductModal;
+
+
 

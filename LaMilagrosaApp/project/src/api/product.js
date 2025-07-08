@@ -32,7 +32,9 @@ export const getAllProducts = async () => {
  * POST /products/register
  */
 export const registerProduct = async (productData) => {
-  try {
+  
+
+    try {
     const response = await axios.post(
       `${API_URL}/register`,
       productData,
