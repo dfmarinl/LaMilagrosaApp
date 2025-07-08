@@ -1,8 +1,10 @@
+// App.tsx
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './contexts/AuthContext';
 import Header from './components/Layout/Header';
 import Sidebar from './components/Layout/Sidebar';
+import Footer from './components/Layout/Footer'; // 👈 Asegúrate de importar el Footer
 import LandingPage from './components/Landing/LandingPage';
 import LoginForm from './components/Auth/LoginForm';
 import RegisterForm from './components/Auth/RegisterForm';
@@ -12,10 +14,8 @@ import CartModal from './components/Cart/CartModal';
 
 const App: React.FC = () => {
   const { user, loading } = useAuth();
-
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  
-  const [activeSection, setActiveSection] = useState('dashboard');
+  const [activeSection, setActiveSection] = useState('ventas');
   const [isCartOpen, setIsCartOpen] = useState(false);
 
   if (loading) {
@@ -31,14 +31,14 @@ const App: React.FC = () => {
 
   return (
     <Router>
-      {user && (
-        <>
+      {user ? (
+        <div className="flex flex-col min-h-screen">
           <Header
             onMenuClick={() => setIsSidebarOpen(true)}
             onCartClick={() => setIsCartOpen(true)}
           />
 
-          <div className="flex">
+          <div className="flex flex-1">
             <Sidebar
               isOpen={isSidebarOpen}
               onClose={() => setIsSidebarOpen(false)}
@@ -46,18 +46,14 @@ const App: React.FC = () => {
               onSectionChange={setActiveSection}
             />
 
-            {/* Main content */}
-            {/* Cambié de md:ml-60 a md:ml-48 para que el contenido se corra menos */}
-            <main className="flex-1 md:ml-35 p-6 bg-gray-50 min-h-screen">
-              
-                <EmployeeDashboard activeSection={activeSection} />
-              
+            <main className="flex-1 p-6 bg-gray-50">
+              <EmployeeDashboard activeSection={activeSection} />
             </main>
           </div>
-        </>
-      )}
 
-      {!user && (
+          <Footer />
+        </div>
+      ) : (
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginForm onToggleForm={() => {}} />} />
@@ -67,16 +63,14 @@ const App: React.FC = () => {
       )}
 
       {user?.role?.toUpperCase() === 'USER' && (
-        <CartModal
-          isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-        />
+        <CartModal isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
       )}
     </Router>
   );
 };
 
 export default App;
+
 
 
 

@@ -3,11 +3,7 @@ import { Eye, EyeOff, Mail, Lock, User, Store } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-interface RegisterFormProps {
-  onToggleForm: () => void;
-}
-
-const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
+const RegisterForm: React.FC = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -53,7 +49,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
       });
 
       if (success) {
-        navigate('/login'); // redirigir a login
+        navigate('/login');
       } else {
         setError('El email ya está registrado o hubo un error.');
       }
@@ -173,7 +169,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
               ¿Ya tienes una cuenta?{' '}
               <button
                 type="button"
-                onClick={onToggleForm}
+                onClick={() => navigate('/login')}
                 className="font-medium text-red-600 hover:text-red-500"
               >
                 Inicia sesión aquí
@@ -187,4 +183,5 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onToggleForm }) => {
 };
 
 export default RegisterForm;
+
 
