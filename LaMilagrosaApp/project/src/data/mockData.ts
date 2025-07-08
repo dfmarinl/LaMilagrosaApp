@@ -73,4 +73,23 @@ export const mockProducts: Product[] = [
     createdAt: new Date('2024-01-01'),
     expirationDate: '2026-01-01'
   },
+
 ];
+
+export const mockOrders: Order[] = [
+  {
+    id: 1,
+    product: mockProducts[0],
+    quantity: 2,
+    total: 90000,
+    date: '2025-07-07',
+  },
+  {
+    id: 2,
+    product: mockProducts[2],
+    quantity: 1,
+    total: 32000,
+    date: '2025-07-06',
+  }
+];
+
