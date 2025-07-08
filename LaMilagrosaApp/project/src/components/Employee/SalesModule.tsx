@@ -35,7 +35,7 @@ const SalesModule: React.FC = () => {
           description: item.description,
           price: item.price,
           image: item.image || 'https://via.placeholder.com/100',
-          category: 'Otros',
+          category:  item.category?.name || 'Otros',
           stock: 50,
           isActive: true,
         }));
