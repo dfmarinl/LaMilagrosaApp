@@ -27,14 +27,41 @@ const UserManagement: React.FC = () => {
   // ✅ Estado para forzar re-renderizado del formulario
   const [formKey, setFormKey] = useState(0);
 
+  // ✅ Función para obtener el rol más alto (similar a AuthContext)
+  const getHighestRole = (authorities: string[]): string => {
+    if (authorities.includes('ADMIN') || authorities.includes('ROLE_ADMIN')) {
+      return 'ADMIN';
+    }
+    if (authorities.includes('EMPLOYEE') || authorities.includes('ROLE_EMPLOYEE')) {
+      return 'EMPLOYEE';
+    }
+    return authorities[0] || 'EMPLOYEE';
+  };
+
+  // ✅ Función mejorada para parsear el rol del usuario
+  const parseUserRole = (user: any): string => {
+    // Si el usuario tiene authorities (array), usar getHighestRole
+    if (user.authorities && Array.isArray(user.authorities)) {
+      return getHighestRole(user.authorities);
+    }
+    
+    // Si viene como campo simple (rol o role)
+    const role = user.rol || user.role || 'EMPLOYEE';
+    
+    // Normalizar el rol removiendo prefijo ROLE_ y convirtiendo a mayúsculas
+    return role.replace('ROLE_', '').toUpperCase();
+  };
+
   // ✅ Función para verificar si el usuario es administrador
   const isAdmin = (userRole?: string): boolean => {
+    console.log(userRole);
     const role = userRole?.toUpperCase() ?? '';
     return role === 'ADMIN' || role === 'ROLE_ADMIN';
   };
 
   // ✅ Función para verificar si el usuario es empleado
   const isEmployee = (userRole?: string): boolean => {
+    console.log(userRole);
     const role = userRole?.toUpperCase() ?? '';
     return role === 'EMPLOYEE' || role === 'ROLE_EMPLOYEE';
   };
@@ -178,7 +205,7 @@ const UserManagement: React.FC = () => {
             email: user.email ?? 'Sin correo',
             phone: user.telefono ?? '',
             address: user.direccion ?? '',
-            role: (user.rol ?? user.role ?? 'EMPLOYEE').replace('ROLE_', '').toUpperCase(),
+            role: parseUserRole(user), // ✅ Usar la función mejorada de parseo
           }));
           setUsers(parsedUsers);
         } else {
@@ -242,7 +269,7 @@ const UserManagement: React.FC = () => {
     }
   }, [isModalOpen]);
 
-  // ✅ Cargar usuarios corregido
+  // ✅ Cargar usuarios corregido con parseo mejorado del rol
   useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
@@ -254,7 +281,7 @@ const UserManagement: React.FC = () => {
           email: user.email ?? 'Sin correo',
           phone: user.telefono ?? user.phone ?? '',
           address: user.direccion ?? user.address ?? '',
-          role: (user.rol ?? user.role ?? 'EMPLOYEE').replace('ROLE_', '').toUpperCase(),
+          role: parseUserRole(user), // ✅ Usar la función mejorada de parseo
         }));
         setUsers(parsedUsers);
       } catch (error: any) {
@@ -466,9 +493,6 @@ const UserManagement: React.FC = () => {
             </div>
             
             <form key={formKey} onSubmit={handleSubmit} className="space-y-4">
-              {/* DEBUG: Mostrar estado actual del formulario */}
-              
-              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Nombre *
