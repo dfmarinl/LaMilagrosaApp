@@ -27,20 +27,32 @@ const UserManagement: React.FC = () => {
   // ✅ Estado para forzar re-renderizado del formulario
   const [formKey, setFormKey] = useState(0);
 
-  // ✅ Función para obtener el rol más alto (similar a AuthContext)
-  const getHighestRole = (authorities: string[]): string => {
-    if (authorities.includes('ADMIN') || authorities.includes('ROLE_ADMIN')) {
-      return 'ADMIN';
-    }
-    if (authorities.includes('EMPLOYEE') || authorities.includes('ROLE_EMPLOYEE')) {
+  // ✅ Función para determinar el rol más alto (actualizada para manejar la respuesta del backend)
+  const getHighestRole = (roles: string[]): string => {
+    if (!roles || !Array.isArray(roles)) {
       return 'EMPLOYEE';
     }
-    return authorities[0] || 'EMPLOYEE';
+    
+    // Orden de prioridad: ADMIN > EMPLOYEE
+    if (roles.includes('ADMIN') || roles.includes('ROLE_ADMIN')) {
+      return 'ADMIN';
+    }
+    if (roles.includes('EMPLOYEE') || roles.includes('ROLE_EMPLOYEE')) {
+      return 'EMPLOYEE';
+    }
+    
+    // Si no encuentra ninguno conocido, devolver el primero o EMPLOYEE por defecto
+    return roles[0] || 'EMPLOYEE';
   };
 
-  // ✅ Función mejorada para parsear el rol del usuario
+  // ✅ Función CORREGIDA para parsear el rol del usuario desde la respuesta del backend
   const parseUserRole = (user: any): string => {
-    // Si el usuario tiene authorities (array), usar getHighestRole
+    // La respuesta del backend tiene un array "roles"
+    if (user.roles && Array.isArray(user.roles)) {
+      return getHighestRole(user.roles);
+    }
+    
+    // Fallback para otros formatos posibles
     if (user.authorities && Array.isArray(user.authorities)) {
       return getHighestRole(user.authorities);
     }
@@ -54,14 +66,12 @@ const UserManagement: React.FC = () => {
 
   // ✅ Función para verificar si el usuario es administrador
   const isAdmin = (userRole?: string): boolean => {
-    console.log(userRole);
     const role = userRole?.toUpperCase() ?? '';
     return role === 'ADMIN' || role === 'ROLE_ADMIN';
   };
 
   // ✅ Función para verificar si el usuario es empleado
   const isEmployee = (userRole?: string): boolean => {
-    console.log(userRole);
     const role = userRole?.toUpperCase() ?? '';
     return role === 'EMPLOYEE' || role === 'ROLE_EMPLOYEE';
   };
@@ -205,7 +215,7 @@ const UserManagement: React.FC = () => {
             email: user.email ?? 'Sin correo',
             phone: user.telefono ?? '',
             address: user.direccion ?? '',
-            role: parseUserRole(user), // ✅ Usar la función mejorada de parseo
+            role: parseUserRole(user), // ✅ Usar la función corregida de parseo
           }));
           setUsers(parsedUsers);
         } else {
@@ -269,20 +279,28 @@ const UserManagement: React.FC = () => {
     }
   }, [isModalOpen]);
 
-  // ✅ Cargar usuarios corregido con parseo mejorado del rol
+  // ✅ FUNCIÓN CORREGIDA: Cargar usuarios con parseo correcto del rol desde la respuesta del backend
   useEffect(() => {
     const fetchUsers = async () => {
       setIsLoading(true);
       try {
         const userList = await userApi.getAllUsers();
-        const parsedUsers: UserType[] = userList.map((user: any) => ({
-          id: user.id?.toString() ?? '',
-          name: user.nombre ?? user.name ?? 'Sin nombre',
-          email: user.email ?? 'Sin correo',
-          phone: user.telefono ?? user.phone ?? '',
-          address: user.direccion ?? user.address ?? '',
-          role: parseUserRole(user), // ✅ Usar la función mejorada de parseo
-        }));
+        console.log('Respuesta del backend:', userList); // Para debugging
+        
+        const parsedUsers: UserType[] = userList.map((user: any) => {
+          const parsedRole = parseUserRole(user);
+          console.log(`Usuario: ${user.email}, Roles originales: ${JSON.stringify(user.roles)}, Rol parseado: ${parsedRole}`); // Para debugging
+          
+          return {
+            id: user.id?.toString() ?? '',
+            name: user.nombre ?? user.name ?? 'Sin nombre',
+            email: user.email ?? 'Sin correo',
+            phone: user.telefono ?? user.phone ?? '',
+            address: user.direccion ?? user.address ?? '',
+            role: parsedRole, // ✅ Usar la función corregida de parseo
+          };
+        });
+        
         setUsers(parsedUsers);
       } catch (error: any) {
         console.error('Error al cargar los usuarios:', error.message);
